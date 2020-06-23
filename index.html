@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<link rel="stylesheet" type="text/css" href="ol.css"/>
+<style>
+/*reset*/html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
+#map{width: 100vw;height: 100vh;background-color: #eee}
+</style>
+<script src="proj4.js"></script>
+<script src="turf.min.js"></script>
+<script src="ol.js"></script>
+</head>
+<body>
+<div id="map"></div>
+<script>
+proj4.defs('EPSG:5179', "+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +units=m +no_defs");
+ol.proj.setProj4(proj4);
+var projection = ol.proj.get('EPSG:5179');
+var interactions = ol.interaction.defaults({ altShiftDragRotate: false, dragPan: false, rotate: false }).extend([new ol.interaction.DragPan({kinetic: null})]);
+var vWorld_attribution = new ol.Attribution({
+    html: '<a target="_blank" href="http://map.vworld.kr/" '
+        + 'style="float: left; width: 353px; height: 29px; cursor: pointer; background-image: url(//map.vworld.kr/images/maps/logo_openplatform.png); background-repeat: no-repeat no-repeat; " '
+        + 'title="VWorld 지도로 보시려면 클릭하세요."></a>' 
+        + ''
+});
+var vWorldGray = new ol.layer.Tile({
+    source : new ol.source.XYZ({
+        attributions : [ vWorld_attribution ],
+        crossOrigin : "anonymous",
+        url : '//xdworld.vworld.kr:8080/2d/gray/service/{z}/{x}/{y}.png'
+    }),
+    visible: true
+});
+var view = new ol.View({
+    projection : projection,
+    center : [937132.2510111027, 1945236.340074972],
+    zoom : 18,
+    minZoom : 7,
+    maxZoom : 19
+});
+var map = new ol.Map({
+    interactions: interactions,	
+    controls: [],//모든 컨트롤 제거
+    layers : [vWorldGray],
+    target : 'map',
+    view : view,
+    loadTilesWhileAnimating: true,
+    loadTilesWhileInteracting: true,
+    // renderer: [('webgl')]
+});
+// view.fit([932961.061415186, 1940123.3993296, 941071.442333214, 1950797.07831573, map.getSize());
+</script>
+</body>
+</html>
